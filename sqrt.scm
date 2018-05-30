@@ -1,14 +1,33 @@
-(define (sqrt x)
-    (define (average a b)
-        (/ (+ a b) 2))
-    (define (good-enough? guess)
-        (< (abs (- (square guess) x)) 0.001))
-    (define (improve guess)
-        (average guess (/ x guess)))
-    (define (sqrt-iter guess)
-        (if (good-enough? guess)
-            guess
-            (sqrt-iter (improve guess))))
-    (sqrt-iter 1.0))
+(define (square x)
+    (* x x)
+)
 
-(sqrt 2)
+(define (average x y)
+    (/ (+ x y) 2)
+)
+
+(define (improve guess x)
+    (average guess (/ x guess))
+)
+
+(define (abs x)
+    (if (< x 0) (- x)
+        x
+    )
+)
+
+(define (good_enough? guess x)
+    (> 0.001 (abs (- x (square guess))))
+)
+
+(define (guess_loop guess x)
+    (if (good_enough? guess x) guess
+        (guess_loop (improve guess x) x)
+    )
+)
+
+(define (sqrt x)
+    (guess_loop 1 x)
+)
+
+(sqrt 9)
