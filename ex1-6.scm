@@ -33,5 +33,5 @@
 )
 
 (define (sqrt x)
-    (guess_loop 1 x)
+    (guess_loop 1.0 x)
 )
