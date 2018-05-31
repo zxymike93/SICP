@@ -20,8 +20,14 @@
     (> 0.001 (abs (- x (square guess))))
 )
 
+(define (new_if predicate then_clause else_clause)
+    (cond (predicate then_clause)
+        (else else_clause)
+    )
+)
+
 (define (guess_loop guess x)
-    (if (good_enough? guess x) guess
+    (new_if (good_enough? guess x) guess
         (guess_loop (improve guess x) x)
     )
 )
