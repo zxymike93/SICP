@@ -1,0 +1,25 @@
+Exercise 1.14
+==============
+
+本题的图因为是在纸上画的，就不贴出来了，基本上就是一个二叉树。
+
+我通过计算 ``(count-change 1)`` ~ ``(count-change 5)`` 发现，
+**时间和空间复杂度都是线性的。**
+
+因为空间复杂度上，算树的最大深度，必定是 ``(cc amount 1)``
+全部用 1 美分硬币的办法。所以空间复杂度是 O(n)
+
+**但是关于时间复杂度，有不同的见解：**
+
+    比如，通常来说二叉树的时间复杂度是指数型的，一般认为是 O(2^n)，
+    网上也有部分文章通过推算，得出
+    `O(n^5) <http://www.billthelizard.com/2009/12/sicp-exercise-114-counting-change.html>`_ 。
+
+但是，因为原文是这样描述的：
+
+    What are the orders of growth of the space and number of steps used by this process
+    **as the amount to be changed increases**?
+
+所以我认为针对这道题，计算的是基于 amount 的复杂度，而不是 kinds-of-coins 。
+
+.. todo:: 勘误
