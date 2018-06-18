@@ -1,0 +1,34 @@
+Exercise 1.34
+=============
+
+    Suppose we define the procedure
+
+    (define (f g) (g 2))
+
+    What happens if the interpreter evaluates
+
+    (f f)
+
+答案
+----
+
+.. code-block:: scheme
+
+    (f f)
+    
+    ; 根据应用序
+    ; 解释器执行 (f f) 会先计算参数 f
+    (f (lambda (f) 2))
+
+    ; 同理，(f 2) 会先对 2 求值
+    (f (f (2 2)))
+
+    ; 因为 2 不是一个 procedure，程序会抛出错误
+
+    ; 2 error> (f f)
+
+    ;The object 2 is not applicable.
+    ;To continue, call RESTART with an option number:
+    ; (RESTART 3) => Specify a procedure to use in its place.
+    ; (RESTART 2) => Return to read-eval-print level 2.
+    ; (RESTART 1) => Return to read-eval-print level 1.
