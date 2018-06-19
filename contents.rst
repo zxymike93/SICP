@@ -19,10 +19,10 @@
         - 最大公约数 *(Greatest Common Divisors)*
         - 例子：素数测试 *(Example: Testing for Primality)*
     - 高阶函数 *(Formulating Abstractions with Higer-Order Procedures)*
-        - 过程作为参数
-        - Lambda
-        - 过程作为通用方法
-        - 过程作为返回结果
+        - 过程作为参数 *(Procedure as Arguments)*
+        - Lambda *(Constructing Procedures Using Lambda)*
+        - 过程作为通用方法 *(Procedures as General Methods)*
+        - 过程作为返回结果 *(Procedures as Returned Values)*
 2. 数据抽象 (Building Abstractions with Data)
 3. 模块化，对象，状态 (Modularity, Objects, and State)
 4. 语言抽象 (Metalinguistic Abstraction)
