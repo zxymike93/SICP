@@ -1,4 +1,6 @@
 # buffers
-
 *~
 \#*\#
+
+# backups
+*.bak
