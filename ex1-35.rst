@@ -1,0 +1,20 @@
+Exercise 1.35
+=============
+
+首先，（处于码字考虑）设“黄金分割率”为 g，根据 1.2.2 节：
+``g^2 = g + 1`` 。
+
+那么只要把等式左右各除以 g，就能转换为 ``g = 1 + 1/g`` 。
+
+使用 ``fixed-point``_ 对 g 求值如下：
+
+_fixed-point: https://github.com/gayu-mike/SICP/blob/master/fixed-point.rkt
+
+.. code-block:: scheme
+
+  (define golden-ratio
+    (fixed-point (lambda (x)
+                   (+ 1 (/ 1 x)))
+                 1.0))
+
+  ;Value 1.6181818181818182
