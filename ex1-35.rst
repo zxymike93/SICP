@@ -6,9 +6,9 @@ Exercise 1.35
 
 那么只要把等式左右各除以 g，就能转换为 ``g = 1 + 1/g`` 。
 
-使用 ``fixed-point``_ 对 g 求值如下：
+使用 `fixed-point`_ 对 g 求值如下：
 
-_fixed-point: https://github.com/gayu-mike/SICP/blob/master/fixed-point.rkt
+.. _fixed-point: https://github.com/gayu-mike/SICP/blob/master/fixed-point.rkt
 
 .. code-block:: scheme
 
