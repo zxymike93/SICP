@@ -20,75 +20,123 @@
 )
 
 
-; rectangle libs
-(define (make-rectangle a-seg b-seg) (cons a-seg b-seg))
-
-(define (a-segment rect) (car rect))
-
-(define (b-segment rect) (cdr rect))
-
-(define (third-leg rect)
-  (let ([Lab (a-segment rect)]
-        [Lbc (b-segment rect)])
-    (let ([Pa (start-segment Lab)]
-          [Pb (end-segment Lab)]
-          [Pc (end-segment Lbc)])
-      (make-segment Pc Pa)))
-)
-
-
-; segment libs
-(define (make-segment start end) (cons start end))
-
-(define (start-segment line) (car line))
-
-(define (end-segment line) (cdr line))
-
-(define (length seg)
-
-  (let ([start (start-segment seg)]
-        [end (end-segment seg)])
-
-    (let ([x1 (x-point start)]
-          [y1 (y-point start)]
-          [x2 (x-point end)]
-          [y2 (y-point end)])
-
-      (sqrt (+ (square (- x1 x2))
-               (square (- y1 y2))))))
-)
-
-
-; point libs
+;;;;;;;; Segments & Points (from ex2-2)
 (define (x-point point) (car point))
 
 (define (y-point point) (cdr point))
 
 (define (make-point x y) (cons x y))
 
+(define (make-segment start end) (cons start end))
 
-; perimeter
+(define (start-segment line) (car line))
+
+(define (end-segment line) (cdr line))
+
+; Compute length of a segment
+(define (seg-len line)
+  (let ([a-coordinate (start-segment line)]
+        [b-coordinate (end-segment line)])
+    (let ([x1 (x-point a-coordinate)]
+          [x2 (x-point b-coordinate)]
+          [y1 (y-point a-coordinate)]
+          [y2 (y-point b-coordinate)])
+      (sqrt (+ (square (- x1 x2))
+               (square (- y1 y2)))))))
+
+
+;;;;;;;; Constructor & Selector A
+
+; Rectangle ... baterrier a
+;  |
+; Segment ... baterrier b
+;  |
+; Point ... baterrier c
+
+#|
+(define (make-rectangle width length) (cons width length))
+
+(define (width rect)
+  (seg-len (car rect)))
+
+(define (length rect)
+  (seg-len (cdr rect)))
+|#
+
+
+;;;;;;;; Constuctors & Selectors B
+
+; Rectangle ... baterrier a
+;  |
+; Pair ... baterrier b
+;  |
+; Segment ... baterrier c
+;  |
+; Point ... baterrier d
+
+(define (make-rect wid-pair len-pair) (cons wid-pair len-pair))
+
+(define (wid-pair rect) (car rect))
+
+(define (len-pair rect) (cdr rect))
+
+(define (make-pair l) (cons l l))
+
+(define (seperate-pair pair) (car pair))
+
+(define (width rect)
+  (let ([wid (seperate-pair (wid-pair rect))])
+    (seg-len wid)))
+
+(define (length rect)
+  (let ([len (seperate-pair (len-pair rect))])
+    (seg-len len)))
+
+
+;;;;;;;; Rectangle Instance A
+
+[define pa (make-point 0 0)]
+[define pb (make-point 1 0)]
+[define pc (make-point 0 2)]
+
+[define l1 (make-segment pa pb)]
+[define l2 (make-segment pa pc)]
+
+; [define rect-inst (make-rectangle l1 l2)]
+
+
+;;;;;;;; Rectangle instance B
+
+[define w-pair (make-pair l1)]
+[define l-pair (make-pair l2)]
+
+[define rect-inst (make-rect w-pair l-pair)]
+
+
+; Talking about rectangle, there are two formula we already know...
+; perimeter = 2 * (width + length)
+; area = width * length
+
 (define (perimeter rect)
-  (+ (length (a-segment rect))
-     (length (b-segment rect))
-     (length (third-leg rect))))
+  (* 2 (+ (width rect)
+          (length rect))))
 
+(define (area rect)
+  (* (width rect)
+     (length rect)))
 
-; Rectangle Instance
-(define Pa (make-point 0 0))
-(define Pb (make-point 1 1))
-(define Pc (make-point 0 2))
+; Print results...
 
-(define Lab (make-segment Pa Pb))
-(define Lbc (make-segment Pb Pc))
-
-(define Rect (make-rectangle Lab Lbc))
-
-
-; test
 (define (print-perimeter rect)
   (newline)
-  (display "Perimeter of rect:")
+  (display "Perimeter of rect: ")
   (display (perimeter rect)))
 
-(print-perimeter Rect)
+(define (print-area rect)
+  (newline)
+  (display "Area of rect: ")
+  (display (area rect)))
+
+
+(print-perimeter rect-inst)
+(print-area rect-inst)
