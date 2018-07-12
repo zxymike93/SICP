@@ -4,9 +4,8 @@
           ((= kind 2) 5)
           ((= kind 3) 10)
           ((= kind 4) 25)
-          ((= kind 5) 50)
-    )
-)
+          ((= kind 5) 50)))
+
 
 ; ∵ 不用硬币 A 的所有排法 + 一定用硬币 A 的所有排法 = 所有排法
 ; 又 ∵ 一定用 A = 至少用 1 个 A
@@ -17,12 +16,8 @@
     (cond ((= amount 0) 1)
           ((or (< amount 0) (= kind-of-coin 0)) 0)
           (else (+ (cc amount (- kind-of-coin 1))
-                   (cc (- amount (deomination kind-of-coin)) kind-of-coin)
-                )
-          )
-    )
-)
+                   (cc (- amount (deomination kind-of-coin)) kind-of-coin)))))
+
 
 (define (count-change amount)
-    (cc amount 5)
-)
+    (cc amount 5))
