@@ -1,5 +1,9 @@
 # The Wizard Book
 
+## Intro
+
+I'm touched every time I read this:
+
 > “I think that it’s extraordinarily important that we in computer science keep fun in computing.
 > When it started out, it was an awful lot of fun. Of course, the paying customers got shafted every now and then,
 > and after a while we began to take their complaints seriously. We began to feel as if
@@ -12,3 +16,15 @@
 > the ability to see the machine as more than when you were first led up to it, that you can make it more.”
 >
 > —Alan J. Perlis (April 1, 1922 – February 7, 1990)
+
+## How to start?
+
+There are only two things you need to do to benefit from *The Wizard Book*.
+
+1. Book mark [the HTML Version](http://sarabander.github.io/sicp/) and read.
+2. Download and install [Racket](https://download.racket-lang.org/) and code.
+
+**Remember:
+Do not spend time trying "Scheme-realated" tools (such as *Emacs*).
+Do one thing at one time.
+**
