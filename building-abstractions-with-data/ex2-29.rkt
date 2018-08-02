@@ -1,5 +1,9 @@
 #lang sicp
 
+; Speaking of `mobile` and `branch` here,
+; use full spell for naming procedures
+; but `mob` and `br` for naming arguments
+
 (define (make-mobile left right)
   (list left right))
 
@@ -19,31 +23,66 @@
 (define (branch-structure br)
   (cadr br))
 
+#|
+; 4
+; Suppose we change the constructor of mobile and branch
+; We only need to change the selector correspondingly
+
+(define (make-mobile left right) (cons left right))
+(define (make-branch length structure) (cons length structure))
+
+(define (left-branch mobile) (car mobile))
+(define (right-branch mobile) (cdr mobile))
+
+(define (branch-length branch) (car branch))
+(define (branch-structure branch) (cdr branch))
+|#
+
 ; 2
 (define (total-weight mob)
-  (+ (weight (left-branch mob))
-     (weight (right-branch mob))))
+  (+ (branch-weight (left-branch mob))
+     (branch-weight (right-branch mob))))
 
-(define (weight br)
+(define (is-weight? x) (not (pair? x)))
+
+(define (branch-weight br)
   (let ([right (branch-structure br)])
     (if (is-weight? right)
         right
         (total-weight right))))
 
-(define (is-weight? x)
-  (not (pair? x)))
+; 3
+(define (torque br)
+  (* (branch-length br)
+     (branch-weight br)))
+
+(define (same-torque? mob)
+  (= (torque (left-branch mob))
+     (torque (right-branch mob))))
+
+(define (balanced? mob)
+  (if (not (pair? mob))
+      #t
+      (and (same-torque? mob)
+           (and (balanced? (branch-structure (left-branch mob)))
+                (balanced? (branch-structure (right-branch mob)))))))
 
 ; Test
-(define a (make-branch 10 10))
-(define b (make-branch 5 5))
-(define m1 (make-mobile a b))
+[define M1 (make-mobile (make-branch 10 (make-mobile (make-branch 2 3)
+                                                     (make-branch 2 3)))
+                        (make-branch 12 5))]
 
-(define c (make-branch 1 m1))
-(define m2 (make-mobile a c))
+[define M2 (make-mobile (make-branch 10 6)
+                        (make-branch 12 (make-mobile (make-branch 2 3)
+                                                     (make-branch 3 2))))]
 
-(define d (make-branch 2 m2))
-(define m3 (make-mobile c d))
+[define M3 (make-mobile (make-branch 2 M1)
+                        (make-branch 3 M2))]
 
-(total-weight m3)
+(total-weight M1)
+(total-weight M2)
+(total-weight M3)
 
-;
+(balanced? M1)
+(balanced? M2)
+(balanced? M3)
