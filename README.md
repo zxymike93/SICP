@@ -1,8 +1,4 @@
-# The Wizard Book
-
-## Intro
-
-I'm touched every time I read this:
+# 魔法师入门指南
 
 > “I think that it’s extraordinarily important that we in computer science keep fun in computing.
 > When it started out, it was an awful lot of fun. Of course, the paying customers got shafted every now and then,
@@ -17,14 +13,50 @@ I'm touched every time I read this:
 >
 > —Alan J. Perlis (April 1, 1922 – February 7, 1990)
 
-## How to start?
+## 如何开始？
 
-There are only two things you need to do to benefit from *The Wizard Book*.
+1. 《计算机程序的构造和解析》课本，或者 [the HTML Version](http://sarabander.github.io/sicp/) 。
+2. 下载 [Racket](https://download.racket-lang.org/) 来完成课本中的习题。
+3. 和基友交流，以及参考 schemewiki 上[大家的解答](http://community.schemewiki.org/?SICP-Solutions) 。
 
-1. Book mark [the HTML Version](http://sarabander.github.io/sicp/) and read.
-2. Download and install [Racket](https://download.racket-lang.org/) and code.
+## 三大主题
 
-**Remember:
-Do not spend time trying "Scheme-realated" tools (such as *Emacs*).
-Do one thing at one time.
-**
+### 抽象 *(Black-box Abstraction)*
+
+1. primitive objects
+  - primitive procedures
+  - primitive data
+2. means of combination
+  - procedure composition
+  - construction of compound data
+3. means of abstraction
+  - procedure defination
+  - simple data abstraction
+4. capturing common patterns
+  - high-order procedures
+  - data as abstraction
+
+### 接口 *(Conventional Interfaces)*
+> 如何控制程序的复杂度
+
+1. generic operations
+2. large-scale structure and modularity
+3. object-oriented programming
+4. operations on aggregates
+
+### 元语言抽象 *(Meta-linguistic Abstraction)*
+> 如何构建一门新语言
+
+1. interpretation
+2. logic programming
+3. register machines
+
+## Lisp 介绍
+
+> 实际上这部分讲的是通用语言所需要的特性，虽然以 Scheme 为例。
+
+一门通用语言需要的三个基本特性：
+
+1. primitive objects: + - * / > < = 1 1.0
+2. means of combination: () cond else if
+3. means of abstraction: define
