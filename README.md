@@ -36,7 +36,7 @@
   - high-order procedures
   - data as abstraction
 
-### 接口 *(Conventional Interfaces)*
+### 约定接口 *(Conventional Interfaces)*
 > 如何控制程序的复杂度
 
 1. generic operations
@@ -57,6 +57,12 @@
 
 一门通用语言需要的三个基本特性：
 
-1. primitive objects: + - * / > < = 1 1.0
-2. means of combination: () cond else if
-3. means of abstraction: define
+|         |     过程      |   数据    |
+|---------|---------------|----------|
+| 基本元素 | + - * / > < = | 23 17.26 |
+|---------|---------------|----------|
+|组合的方法| () cond else if |        |
+|---------|---------------|----------|
+|抽象的方法|    define     |          |
+
+之后的章节，我们还会更新这个表中的内容（尤其是“数据”）。不过目前这些足够支持学习现阶段的一些概念、知识了。书本中的1.1.1~1.1.6讲解了这些 Lisp 的基础知识点。
