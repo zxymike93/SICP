@@ -1,5 +1,7 @@
+#lang sicp
+
 (define (sqrt x)
-  (sqrt-iter 1 x))
+  (sqrt-iter 1.0 x))
 
 ;(define (sqrt-iter guess x)
 ;  (if (good-enough? guess x)
@@ -52,3 +54,4 @@
 ;; if <predicate> <then-clause> <else-clause>
 ;; 这里的 <then-clause> 作为 base case 会终止程序。（递归程序必须要有终止的情况）
 ;; 而题目里的 new-if 因为是过程，所以会一直递归下去。
+;; => Interactions disabled; out of memory
