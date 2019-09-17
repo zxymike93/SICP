@@ -36,7 +36,7 @@
   - high-order procedures
   - data as abstraction
 
-### 约定接口 *(Conventional Interfaces)*
+### 接口 *(Conventional Interfaces)*
 > 如何控制程序的复杂度
 
 1. generic operations
@@ -57,12 +57,82 @@
 
 一门通用语言需要的三个基本特性：
 
-|         |     过程      |   数据    |
-|---------|---------------|----------|
-| 基本元素 | + - * / > < = | 23 17.26 |
-|---------|---------------|----------|
-|组合的方法| () cond else if |        |
-|---------|---------------|----------|
-|抽象的方法|    define     |          |
+1. primitive objects: + - * / > < = 1 1.0
+2. means of combination: () cond else if
+3. means of abstraction: define
 
-之后的章节，我们还会更新这个表中的内容（尤其是“数据”）。不过目前这些足够支持学习现阶段的一些概念、知识了。书本中的1.1.1~1.1.6讲解了这些 Lisp 的基础知识点。
+### 1.2.2 Tree Recursion
+
+根据斐波那契的定义，
+
+  Fib(n) = 0, n = 0
+         = 1, n = 1
+         = Fib(n-1) + Fib(n-2)
+
+很直观地就可以写出一个过程：
+
+(define (fib n)
+  (cond [(= n 0) 0]
+        [(= n 1) 1]
+        [else (+ (fib (- n 1))
+                 (fib (- n 2)))]))
+
+但是这个估值过程是树状递归的，有大量计算重复，比如下面 [] 框出的地方， [+ (fib 1) (fib 0)] 就分别计算了2次。另外空间复杂度也是 O(n)，因为要用栈保存计算状态。
+
+(fib 4)
+
+(+ (fib 3)
+   (fib 2))
+
+(+ (+ (fib 2)
+      (fib 1))
+   (+ (fib 1)
+      (fib 0)))
+
+(+ (+ [+ (fib 1)
+         (fib 0)]
+      (fib 1))
+   [+ (fib 1)
+      (fib 0)])
+
+将递归的估值过程转换为迭代的估值过程，可以手动做“计数”。
+
+(define (fib n)
+  (define (fib-iter a b count)
+    (if (= count 0)
+        b
+        (fib-iter (+ a b) a (- count 1))))
+  (fib-iter 1 0 n))
+
+(fib 4)
+(fib-iter 1 0 4)
+(fib-iter 1 1 3)
+(fib-iter 2 1 2)
+(fib-iter 3 2 1)
+(fib-iter 5 3 0)
+3
+
+;; 如果有 kind 种硬币,deomination 返回最贵的硬币的面值
+(define (deomination kind)
+  (cond [(= kind 1) 1]
+        [(= kind 2) 5]
+        [(= kind 3) 10]
+        [(= kind 4) 25]
+        [(= kind 5) 50]))
+
+; ∵ 不用硬币 A 的所有排法 + 一定用硬币 A 的所有排法 = 所有排法
+; 又 ∵ 一定用 A = 至少用 1 个 A
+; ∴ (= (cc amount kind-of-coin)
+;      (+ (cc amount (- kind-of-coin 1)
+;         (cc (- amount (一个 A 的面值)) kind-of-coin))))
+(define (cc amount kind-of-coin)
+  (cond [(= amount 0)
+         1]
+        [(or (< amount 0) (= kind-of-coin 0))
+         0]
+        [else
+         (+ (cc amount (- kind-of-coin 1))
+            (cc (- amount (deomination kind-of-coin)) kind-of-coin))]))
+
+(define (count-change amount)
+  (cc amount 5))
