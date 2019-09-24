@@ -23,16 +23,16 @@
 
 ### 抽象 *(Black-box Abstraction)*
 
-1. primitive objects
+- primitive objects
   - primitive procedures
   - primitive data
-2. means of combination
+- means of combination
   - procedure composition
   - construction of compound data
-3. means of abstraction
+- means of abstraction
   - procedure defination
   - simple data abstraction
-4. capturing common patterns
+- capturing common patterns
   - high-order procedures
   - data as abstraction
 
@@ -63,22 +63,27 @@
 
 ### 1.2.2 Tree Recursion
 
-根据斐波那契的定义，
+#### 斐波那契数列
 
+```racket
   Fib(n) = 0, n = 0
          = 1, n = 1
          = Fib(n-1) + Fib(n-2)
+```
 
 很直观地就可以写出一个过程：
 
+```racket
 (define (fib n)
   (cond [(= n 0) 0]
         [(= n 1) 1]
         [else (+ (fib (- n 1))
                  (fib (- n 2)))]))
+```
 
 但是这个估值过程是树状递归的，有大量计算重复，比如下面 [] 框出的地方， [+ (fib 1) (fib 0)] 就分别计算了2次。另外空间复杂度也是 O(n)，因为要用栈保存计算状态。
 
+```racket
 (fib 4)
 
 (+ (fib 3)
@@ -94,9 +99,11 @@
       (fib 1))
    [+ (fib 1)
       (fib 0)])
+```
 
 将递归的估值过程转换为迭代的估值过程，可以手动做“计数”。
 
+```racket
 (define (fib n)
   (define (fib-iter a b count)
     (if (= count 0)
@@ -111,7 +118,11 @@
 (fib-iter 3 2 1)
 (fib-iter 5 3 0)
 3
+```
 
+#### 唱零钱问题
+
+```racket
 ;; 如果有 kind 种硬币,deomination 返回最贵的硬币的面值
 (define (deomination kind)
   (cond [(= kind 1) 1]
@@ -136,9 +147,13 @@
 
 (define (count-change amount)
   (cc amount 5))
+```
 
 ### 1.2.6 素数测试
 
+> 通过介绍 2 种素数测试的方法，展示时间复杂度分别为 √ 和 log 的过程
+
+```racket
 ;; 测试素数，两种复杂度的算法
 ;; 1、根号n
 ;; 2、log2n
@@ -169,4 +184,4 @@
     ;; 
     (= (expmod a n n) a))
   (try (+ 1 (random (- n 1)))))
-
+```
