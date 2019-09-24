@@ -136,3 +136,37 @@
 
 (define (count-change amount)
   (cc amount 5))
+
+### 1.2.6 素数测试
+
+;; 测试素数，两种复杂度的算法
+;; 1、根号n
+;; 2、log2n
+
+;; 如果 d 是 n 的除数，那么 n/d 也为 n 的除数。d 和 n/d 不能同时小于 根号n
+;; 因此，这个直接“遍历”的测试方法只需测试 1~根号n 个数，复杂度为 根号n
+
+(define (prime? n)
+  (= n (smallest-divisor n)))
+
+(define (smallest-divisor n)
+  (find-divisor n 2))
+
+(define (find-divisor n d)
+  (cond [(> (square d) n) n]
+        [(divides? d n) d]
+        [else (find-divisor n (+ d 1))]))
+
+(define (divides? n d)
+  (= 0 (remainder n d)))
+
+;; a < n & n is prime. then, remainder(a^n, n) = remainder(a, n)
+;; 如果n不是素数，大部分a都不会符合，所以有了费马测试
+;; 测试较多的a，随着测试的数越多，越能证明n是素数
+
+(define (fermat-test n)
+  (define (try a)
+    ;; 
+    (= (expmod a n n) a))
+  (try (+ 1 (random (- n 1)))))
+
