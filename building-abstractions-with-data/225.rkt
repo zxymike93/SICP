@@ -12,4 +12,4 @@
 ;; to get 7
 (car (cdr (car (cdr (cdr a)))))
 (car (car b))
-(car (cdr (car (cdr (car (cdr (car (cdr (car (cdr (car (cdr c))))))))))))
+(cadr (cadr (cadr (cadr (cadr (cadr c))))))
