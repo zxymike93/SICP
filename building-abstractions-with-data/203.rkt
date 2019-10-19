@@ -29,6 +29,7 @@
   (cdr s))
 
 ;; rectangle v1
+;; 使用 长、宽 表示 矩形
 ;(define (make-rectangle h w)
 ;  (cons h w))
 ;
@@ -39,6 +40,8 @@
 ;  (cdr r))
 
 ;; rectangle v2
+;; 使用 左上角、右下角 两个点来表示 矩形
+;; 这样的矩形实际上水平与 x轴
 (define (make-rectangle tl dr)
   (let ([dl (make-point (x-coor tl) (y-coor dr))]
         [tr (make-point (x-coor dr) (y-coor tl))])
