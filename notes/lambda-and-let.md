@@ -12,7 +12,7 @@ lambda
 .. code-block:: scheme
 
   (define (sum a b) (+ a b))
-  
+
   (sum 1 2)
 
   ;Value: 3
@@ -20,7 +20,7 @@ lambda
   ((lambda (a b) (+ a b)) 1 2)
 
   ;Value: 3
-  
+
 如果这样写： ``(define sum (lambda (a b) (+ a b)))`` 也是可以给这个过程绑定变量名的。
 
 上面列举的例子在 `Python 的 lambda`_ 中有类似的写法，据说这是 Python 借鉴了 Scheme 的地方，
@@ -48,7 +48,7 @@ let
     expr1 expr2 ... expr)
     
 let 中变量的 scope 问题
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~racket
 
 特别指出 scope 的问题是因为 ``let`` 有个“坑”。
 
@@ -102,3 +102,6 @@ let 中变量的 scope 问题
     (* a b))
   
   error => unbound identifier in module in: a
+
+~~~~~~~~~~~~~~~~~~~~~~
+
