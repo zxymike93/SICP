@@ -1,168 +1,126 @@
-#lang sicp
+# 序列作为约定界面
 
-;;;;;;;;;;;;;;;;; BASICS ;;;;;;;;;;;;;;;;;;
+在高阶函数部分，是通过程序结构的相似性来抽象出高阶过程的。而对于复合数据，也有对应的抽象层次 conventional interface。
 
-(define (square x) (* x x))
+## 原始例子
 
-(define (even? x) (= 0 (remainder x 2)))
+不过一般不能简单地通过观察函数结构抽取出来。比如下面两个例子，均由 enumerate, filter, map, accumulate 组成：
 
-(define (odd? x) (not (even? x)))
+1. 求``树``中奇数的平方和
 
-(define (fib n)
-  (cond ((= n 0) 0)
-        ((= n 1) 1)
-        (else (+ (fib (- n 1))
-                 (fib (- n 2))))))
+   > [enumerate] -> [filter]  ->  [map]  -> [accumulate]
+   >
+   > ​    tree leaves      odd?       square            +, 0
 
-#|
-;;;;;;;;;;;;;;; Raw ;;;;;;;;;;;;;;;;;;
-
-; enumerate a tree and square its leaves which are odd
+```racket
+;; 遍历树叶，判断是否为奇数，将奇数平方，求和
 (define (sum-odd-squares tree)
-  (cond ((null? tree)
-         0)
-        ((not (pair? tree))
+  (cond [(null? tree)
+         0]
+        [(not (pair? tree))
          (if (odd? tree)
              (square tree)
-             0))
-        (else
-         (+ (sum-odd-squares (car tree))
-            (sum-odd-squares (cdr tree))))))
+             0)]
+        [else
+         (+ (sum-odd-tree (car tree))
+            (sum-odd-tree (cdr tree)))]))
+```
 
-; enumerate 0~n and get their fib-number
-; then filter the even ones and put them into a list
+2. 将 fib(n) ``数列``中的偶元素重组
+
+   > [enumerate] -> [map]   -> [filter] -> [accumulate]
+   >              k                fib         even?         cons, ()
+
+```racket
+;; 遍历下标k，求其对应的fib值，其中的偶数值，重组到()中
 (define (even-fibs n)
   (define (next k)
     (if (> k n)
         nil
-        (let ([f (fib k)])
-          (if (even? f)
-              (cons f (next (+ k 1)))
-              (next (+ k 1))))))
+        (if (even? (fib k))
+            (cons (fib k)
+                  (next (+ k 1)))
+            (next (+ k 1)))))
   (next 0))
+```
 
-; If we compare these two procedures, they are distinct from one another.
-; However, we can discribe them like this:
-|#
 
-; 1. *enumerate* the leaves of a tree
-; 2. *filter* and select the odd ones
-; 3. *for each* odd ones, square it
-; 4. *accumulate* the result with +
 
-(define (sum-odd-squares tree)
+它们的结构不同由于以下两点
+
+- 几个抽象部分顺序不同（如上所示）
+- 各部分在实际写法中不是简单的一一对应（如遍历树叶就分为 null? pair? 两个测试）
+
+## 使用 Sequence 作为数据层
+
+### 针对 Sequence 传递的高阶过程
+
+如果我们可以抽象出一种形式，使得过程可以按 signal(enumerate, filter, ...) 传递，那就可以抽象出更高阶的过程。
+
+通过使用 (list) 作为数据层，可以设计一些针对 list 传递的、通用的 signals：
+
+```
+(define (map f items)
+  (if (null? items)
+      nil
+      (cons (f (car items))
+            (map f (cdr items)))))
+
+(define (filter predicate items)
+  (cond [(null? items)
+         nil]
+        [(predicate (car items))
+         (cons (car items) (filter predicate (cdr items)))]
+        [else
+         (filter predicate (cdr items))]))
+
+(define (accumulate f init items)
+  (if (null? items)
+      init
+      (f (car items)
+         (accumulate f init (cdr items)))))
+```
+
+由于上面两个例子**原始数据**不同（一个是``树``一个是``区间``），但是最终都要表示为``序列``这种抽象。
+
+### 构造 Sequence 界面
+
+因此分别构造两个 ``enumerate`` 作为界面，使得通过这一界面访问任意数据（无视其本身实现），都可以将其视为``序列``：
+
+- ``(enumerate tree) -> sequence``
+- ``(enumerate interval) -> sequence``
+
+```racket
+(define (enumerate-tree tree)
+  (cond [(null? tree) nil]
+        [(not (pair? tree)) (list tree)]
+        [else (append (enumerate-tree (car tree))
+                      (enumerate-tree (cdr tree)))]))
+
+(define (enumerate-interval a b)
+  (if (> a b)
+      nil
+      (cons a (enumerate-interval (+ a 1) b))))
+```
+
+### 使用
+
+**从其他语言的角度来看，
+
+```racket
+(define (sum-odd-square tree)
   (accumulate
    +
    0
-   (map square
-        (filter odd?
-                (enumerate-tree tree)))))
+   (map square (filter odd? (enumerate-tree tree)))))
 
-; 1. *enumerate* integers 0~n
-; 2. *for each* integers, get there fib-number
-; 3. *filter* and selet the even ones
-; 4. *accumulate* the result with cons (meaning that as a list)
-
-(define (even-fibs n)
+(define (even-fib n)
   (accumulate
    cons
    nil
-   (filter even?
-           (map fib
-                (enumerate-interval 0 n)))))
+   (filter even? (map fib (enumerate-interval 0 n)))))
+```
 
-; Tests
-#|(sum-odd-squares (list
-                  (list 1 2)
-                  (list 3 (list 4 5))))
+## 结语
 
-(even-fibs 10)|#
-
-;;;;;;;;;;;;;;;;; My Version ;;;;;;;;;;;;;;;
-
-(define (enumerate-interval low high)
-  (if (> low high)
-      nil
-      (cons low (enumerate-interval
-                 (+ low 1)
-                 high))))
-
-(define (enumerate-tree tree)
-  (cond ((null? tree) nil)
-        ((not (pair? tree)) (list tree))
-        (else (append (enumerate-tree (car tree))
-                      (enumerate-tree (cdr tree))))))
-
-(define (accumulate proc base sequence)
-  (if (null? sequence)
-      base
-      (proc (car sequence)
-            (accumulate proc base (cdr sequence)))))
-
-(define (filter test sequence)
-  (define (iter old new)
-    (if (null? old)
-        (reverse new)
-        (let ([x (car old)])
-          (if (test x)
-              (iter (cdr old) (cons x new))
-              (iter (cdr old) new)))))
-  (iter sequence nil))
-
-#|
-(define (filter test sequence)
-  (cond ((null? sequence)
-         nil)
-        ((test (car sequence))
-         (cons (car sequence) (filter test (cdr sequence))))
-        (else
-         (filter test (cdr sequence)))))
-|#
-
-; Tests
-; (fib 3)
-; (accumulate * 1 (list 1 2 3))
-; (accumulate cons nil (list 1 2 3))
-; (odd? 2)
-; (filter even? (list 1 2 3 4))
-; (enumerate-tree (list (list 1 2)
-;                       (list 3 (list 4 5))))
-; (enumerate-interval 1 5)
-
-
-;;;;;;;;;;;;;;;;;; Conventional Interface ;;;;;;;;;;;;;;;;;;;
-
-; 1. combine processing modules as lists
-; 2. localize data-stucture dependencies to just sequence operations
-
-; a list of the squares of the first n+1 fib-number
-(define (list-fib-squares n)
-  (accumulate
-   cons
-   nil
-   (map square
-        (map fib
-             (enumerate-interval 0 n)))))
-
-(list-fib-squares 2)
-; (0 1 1 4 9 25)
-
-
-; compute product of the squares of odd-int in a sequence
-(define (product-of-squares-of-odd-elements sequence)
-  (accumulate
-   *
-   1
-   (map square (filter odd? sequence))))
-
-; (product-of-squares-of-odd-elements (list 1 2 3 4 5))
-; 225
-
-#|
-; conventional data-processing apps using sequence
-(define (salary-of-highest-paid-programmer records)
-  (accumulate
-   max
-   0
-   (map salary (filter programmer? records))))
-|#
+从其他语言的视角来看，我们类似于将``sequence``视为一个类/ADT，几个 signals 相当于它的操作/方法。
