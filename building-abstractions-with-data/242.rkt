@@ -55,33 +55,6 @@
 (filter odd? (list 1 2 3))
 
 ;; 然后，定义题目要求的过程
-;(((1 3) (1 2) (1 1))
-; ((2 3) (1 2) (1 1))
-; ((3 3) (1 2) (1 1))
-; ((1 3) (2 2) (1 1))
-; ((2 3) (2 2) (1 1))
-; ((3 3) (2 2) (1 1))
-; ((1 3) (3 2) (1 1))
-; ((2 3) (3 2) (1 1))
-; ((3 3) (3 2) (1 1))
-; ((1 3) (1 2) (2 1))
-; ((2 3) (1 2) (2 1))
-; ((3 3) (1 2) (2 1))
-; ((1 3) (2 2) (2 1))
-; ((2 3) (2 2) (2 1))
-; ((3 3) (2 2) (2 1))
-; ((1 3) (3 2) (2 1))
-; ((2 3) (3 2) (2 1))
-; ((3 3) (3 2) (2 1))
-; ((1 3) (1 2) (3 1))
-; ((2 3) (1 2) (3 1))
-; ((3 3) (1 2) (3 1))
-; ((1 3) (2 2) (3 1))
-; ((2 3) (2 2) (3 1))
-; ((3 3) (2 2) (3 1))
-; ((1 3) (3 2) (3 1))
-; ((2 3) (3 2) (3 1))
-; ((3 3) (3 2) (3 1)))
 
 ;; 添加新的 position 到 position 序列中
 ;; int, int, position -> position
@@ -119,33 +92,9 @@
                     k-1-queens))
    (accumulate (lambda (x y) (and x y))
                #t
-               (map (lambda (q) (not (= (- (car k-queen) (car q))
-                                        (- (cadr k-queen) (cadr q)))))
+               (map (lambda (q) (not (= (- (car k-queen) (cadr k-queen))
+                                        (- (car q) (cadr q)))))
                     k-1-queens))))
-  ;  (and
-;   ;; 不同一行
-;   (accumulate (lambda (x y) (and x y)) #t (map (lambda (i) (not (= (car i)
-;                                                                    k))) other-positions))
-;   ;; 不同一列
-;   (accumulate (lambda (x y) (and x y)) #t (map (lambda (i) (not (= (cadr i)
-;                                                                    k))) other-positions))
-;   ;; 不同一对角线
-;   (accumulate (lambda (x y) (and x y)) #t (map (lambda (i) (not (= (+ (car i) (cadr i))
-;                                                                    k))) other-positions))
-;   (accumulate (lambda (x y) (and x y)) #t (map (lambda (i) (not (= (+ (car i) (cadr i) 2)
-;                                                                    k))) other-positions))))
-;
-;(utest "safe? " (safe? 4 (list (list 5 4) (list 1 3) (list 4 2) (list 6 1))))
-
-;(define (f k)
-;  (if (= k 0)
-;      (list nil)
-;      (flatmap (lambda [rest-of-queens]
-;                 (map (lambda [new-row]
-;                        (adjoin-position new-row k rest-of-queens))
-;                      (enumerate-interval 1 3)))
-;               (f (- k 1)))))
-;(f 3)
 
 (define (queens board-size)
   
@@ -167,3 +116,43 @@
   (queen-cols board-size))
 
 (length (queens 8))
+
+;; 为了清晰地知道数据结构，中途 debug 拆分了中间的函数
+
+;(define (f k)
+;  (if (= k 0)
+;      (list nil)
+;      (flatmap (lambda [rest-of-queens]
+;                 (map (lambda [new-row]
+;                        (adjoin-position new-row k rest-of-queens))
+;                      (enumerate-interval 1 3)))
+;               (f (- k 1)))))
+;(f 3)
+
+;(((1 3) (1 2) (1 1))
+; ((2 3) (1 2) (1 1))
+; ((3 3) (1 2) (1 1))
+; ((1 3) (2 2) (1 1))
+; ((2 3) (2 2) (1 1))
+; ((3 3) (2 2) (1 1))
+; ((1 3) (3 2) (1 1))
+; ((2 3) (3 2) (1 1))
+; ((3 3) (3 2) (1 1))
+; ((1 3) (1 2) (2 1))
+; ((2 3) (1 2) (2 1))
+; ((3 3) (1 2) (2 1))
+; ((1 3) (2 2) (2 1))
+; ((2 3) (2 2) (2 1))
+; ((3 3) (2 2) (2 1))
+; ((1 3) (3 2) (2 1))
+; ((2 3) (3 2) (2 1))
+; ((3 3) (3 2) (2 1))
+; ((1 3) (1 2) (3 1))
+; ((2 3) (1 2) (3 1))
+; ((3 3) (1 2) (3 1))
+; ((1 3) (2 2) (3 1))
+; ((2 3) (2 2) (3 1))
+; ((3 3) (2 2) (3 1))
+; ((1 3) (3 2) (3 1))
+; ((2 3) (3 2) (3 1))
+; ((3 3) (3 2) (3 1)))
