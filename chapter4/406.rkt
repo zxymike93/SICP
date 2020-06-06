@@ -82,11 +82,41 @@
     (map cadr (cadr exp)))
   (define (let-body exp)
     (cddr exp))
-  (define (let->combination exp)
-    (cons (make-lambda (let-variables exp) (let-body exp))
-          (let-expressions exp)))
+;  (define (let->combination exp)
+;    (cons (make-lambda (let-variables exp) (let-body exp))
+;          (let-expressions exp)))
+  (define (let->combination exp env)
+    (cond [(named-let? exp)
+           (display (named-let-name exp)) (newline)
+           (display (named-let-variables exp)) (newline)
+           (display (named-let-values exp)) (newline)
+           (display (named-let-body exp)) (newline)
+           (sequence->exp
+            (list
+             (list 'def (cons (named-let-name exp) (named-let-variables exp))
+                   (named-let-body exp))
+             (list (named-let-name exp) (named-let-values exp))))]
+          [else
+           (cons (make-lambda (let-variables exp) (let-body exp))
+                 (let-expressions exp))]))
+
+  ;; 此外还要定义几个过程
+  (define (named-let? exp)
+    (symbol? (cadr exp)))
+
+  (define (named-let-name exp)
+    (cadr exp))
+
+  (define (named-let-variables exp)
+    (map car (caddr exp)))
+
+  (define (named-let-values exp)
+    (map cadr (caddr exp)))
+
+  (define (named-let-body exp)
+    (cadddr exp))
   (define (eval-let exp env)
-    (meta-eval (let->combination exp) env))
+    (meta-eval (let->combination exp env) env))
   ;; if
   (define (make-if p c a) (list 'if p c a))
   (define (if-predication exp) (cadr exp))
@@ -147,9 +177,14 @@
         (list '< <)
         (list 'assoc assoc)))
 
+(define (tagged-list? obj tag)
+  (if (pair? obj)
+      (eq? tag (car obj))
+      false))
+
 (define (prim-names) (map car prims))
 (define (prim-procs) (map (lambda (p) (list 'prim (cadr p))) prims))
-(define (primitive? exp) (eq? (car exp) 'prim))
+(define (primitive? exp) (tagged-list? exp 'prim))
 (define (apply-prim exp args) (apply (cadr exp) args))
 
 ;; ENV
@@ -218,7 +253,7 @@
 
 ;; COMPOUND
 (define (make-proc params body env) (list 'proc params body env))
-(define (compound? exp) (eq? (car exp) 'proc))
+(define (compound? exp) (tagged-list? exp 'proc))
 (define (proc-params exp) (cadr exp))
 (define (proc-body exp) (caddr exp))
 (define (proc-env exp) (cadddr exp))
@@ -261,6 +296,8 @@
         [else (error "Unknown type of expression: " exp)]))
 
 (define (meta-apply proc args)
+  (display proc)
+  (display args)
   (cond [(primitive? proc)
          (apply-prim proc args)]
         [(compound? proc)
@@ -302,4 +339,6 @@
 ;(meta-eval '(cond ((assoc ''b '(('a 1) ('b 2))) => cadr) (else false)) global-env)
 ;(meta-eval '(+ 7 11) global-env)
 ;(meta-eval '(inc 100) global-env)
-(meta-eval '(let ((a 1) (b 2)) (+ a b)) global-env)
+;(meta-eval '(let ((a 1) (b 2)) (+ a b)) global-env)
+(meta-eval '(def (fib n) (let fib-iter ((a 1) (b 0) (count n)) (if (= count 0) b (fib-iter (+ a b) a (- count 1))))) global-env)
+(meta-eval '(fib 5) global-env)
