@@ -88,7 +88,7 @@
   (if (stream-null? s)
       the-empty-stream
       (cons-stream (proc (stream-car s))
-                   (stream-map (stream-cdr s) proc))))
+                   (stream-map proc (stream-cdr s)))))
 
 ;; 去重的 map
 (define (flatten-stream stream)
@@ -155,7 +155,8 @@
   (if (indexable? assertion)
       (let ([key (index-key-of assertion)])
         (let ([current-assertion-stream (get-stream key 'assertion-stream)])
-          (put key 'asstion-stream
+          (put key
+               'assertion-stream
                (cons-stream assertion current-assertion-stream))))
       ))
 
@@ -185,7 +186,9 @@
     (if (indexable? pattern)
         (let ([key (index-key-of pattern)])
           (let ([current-rule-stream (get-stream key 'rule-stream)])
-            (put key 'rule-stream current-rule-stream)))
+            (put key
+                 'rule-stream
+                 (cons-stream rule current-rule-stream))))
         )))
 
 (define (add-rule! rule)
@@ -331,7 +334,7 @@
 (put 'not 'qeval negate)
 
 ;; execute applies lisp prime
-(define user-initial-environment '())
+(define user-initial-environment (scheme-report-environment 5))
 (define (execute exp)
   (apply (eval (predicate exp) user-initial-environment)
          (args exp)))
@@ -389,7 +392,7 @@
            'failed]
           ;; ?x->5
           [else
-           (extend )])))
+           (extend var val frame)])))
 
 ;;; matcher
 ;;; 负责所有简单模式的匹配
@@ -436,7 +439,7 @@
         [(var? p1)
          (extend-if-possible p1 p2 frame)]
         [(var? p2)
-         (extend-if-possible p2 p2 frame)] ;***
+         (extend-if-possible p2 p1 frame)] ;***
         [(and (pair? p1) (pair? p2))
          (unify-match (cdr p1)
                       (cdr p2)
@@ -525,11 +528,82 @@
            (query-driver-loop)])))
 
 ;;; test cases
-(let ([q (query-syntax-process '(assert! (salary (Bitdiddle Ben) 6000)))])
-  (add-rule-or-assertion! (add-assertion-body q)))
+(define test-cases-assertions
+  (list
+   '(address (Bitdiddle Ben) (Slumerville (Ridge Road) 10))
+   '(job (Bitdiddle Ben) (computer wizard))
+   '(salary (Bitdiddle Ben) 60000)
+   '(address (Hacker Alyssa P) (Cambridge (Mass Ave) 78))
+   '(job (Hacker Alyssa P) (computer programmer))
+   '(salary (Hacker Alyssa P) 40000)
+   '(supervisor (Hacker Alyssa P) (Bitdiddle Ben))
+   '(address (Fect Cy D) (Cambridge (Ames Street) 3))
+   '(job (Fect Cy D) (computer programmer))
+   '(salary (Fect Cy D) 35000)
+   '(supervisor (Fect Cy D) (Bitdiddle Ben))
+   '(address (Tweakit Lem E) (Boston (Bay State Road) 22))
+   '(job (Tweakit Lem E) (computer technician))
+   '(salary (Tweakit Lem E) 25000)
+   '(supervisor (Tweakit Lem E) (Bitdiddle Ben))
+   '(address (Reasoner Louis) (Slumerville (Pine Tree Road) 80))
+   '(job (Reasoner Louis) (computer programmer trainee))
+   '(salary (Reasoner Louis) 30000)
+   '(supervisor (Reasoner Louis) (Hacker Alyssa P))
+   ))
 
-(get 'salary 'assertion-stream)
+(define test-cases-rules
+  (list
+   '(rule (same ?x ?x))
+   '(rule (lives-near ?person-1 ?person-2)
+          (and (address ?person-1 (?town . ?rest-1))
+               (address ?person-2 (?town . ?rest-2))
+               (not (same ?person-1 ?person-2))))
+   '(rule (wheel ?person)
+          (and (supervisor ?middle-manager ?person)
+               (supervisor ?x ?middle-manager)))
+   '(rule (outranked-by ?staff-person ?boss)
+          (or (supervisor ?staff-person ?boss)
+              (and (supervisor ?staff-person ?middle-manager)
+                   (outranked-by ?middle-manager ?boss))))
+   '(rule (append-to-form () ?y ?y))
+   '(rule (append-to-form (?u . ?v) ?y (?u . ?z))
+          (append-to-form ?v ?y ?z))
+   ))
 
-(let ([q (query-syntax-process '(salary (Bitdiddle Ben) ?amount))])
-  (display q)
-  (qeval q (singleton-stream '())))
+(define (assert-test-cases! assertions)
+  (if (not (null? assertions))
+      (let ([q (query-syntax-process (list 'assert! (car assertions)))])
+        (add-rule-or-assertion! (add-assertion-body q))
+        (assert-test-cases! (cdr assertions)))
+      'ok))
+
+(define (q? query)
+  (let ([q (query-syntax-process query)])
+    (display-stream (stream-map (lambda [frame] (instantiate
+                                                  q
+                                                  frame
+                                                  (lambda [v f] (contract-question-mark v))))
+                                (qeval q (singleton-stream '()))))))
+
+(assert-test-cases! test-cases-assertions)
+(assert-test-cases! test-cases-rules)
+
+;(q? '(job ?name (computer programmer)))
+;(q? '(job ?name (computer . ?what)))
+;(q? '(and (job ?name (computer programmer))
+;          (salary ?name ?amount)
+;          (address ?name ?where)))
+;(q? '(or (supervisor (Reasoner Louis)
+;                     (Bitdiddle Ben))
+;         (supervisor (Reasoner Louis)
+;                     (Hacker Alyssa P))
+;         (supervisor (Tweakit Lem E) 
+;                     (Hacker Alyssa P))))
+;(q? '(and (supervisor ?x (Bitdiddle Ben))
+;          (not (job ?x (computer programmer)))))
+;(q? '(and (salary ?person ?amount)
+;          (lisp-value > ?amount 30000)))
+;(q? '(wheel ?who))
+(q? '(append-to-form (a b) (c d) ?z))
+(q? '(append-to-form (a b) ?y (a b c d)))
+(q? '(append-to-form ?x ?y (a b c d)))

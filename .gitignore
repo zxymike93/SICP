@@ -4,3 +4,6 @@
 
 # backups
 *.bak
+
+# OSX
+.DS_Store
