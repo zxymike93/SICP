@@ -1,5 +1,6 @@
 #lang sicp
 
+;; 实现一个迭代版本的 sigma
 (define (sum term next a b)
   (define (iter a result)
     (if (> a b)

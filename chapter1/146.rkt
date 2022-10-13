@@ -1,5 +1,7 @@
 #lang sicp
 
+;; 实现 improve 的迭代版本
+
 (define (iterative-improve good-enough? improve)
   (lambda (x) (if (good-enough? x)
                   x

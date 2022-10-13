@@ -14,7 +14,7 @@
 (define (divides? a b)
   (= (remainder a b) 0))
 
-;; tests
+;; 计算 199 1999 19999 的最小因子
 (smallest-divisor 199)
 (smallest-divisor 1999)
 (smallest-divisor 19999)

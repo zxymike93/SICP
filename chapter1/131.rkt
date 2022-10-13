@@ -1,5 +1,6 @@
 #lang sicp
 
+;; 参考累加，实现一个累乘算法
 (define (product-rcsv term next a b)
   (if (> a b)
       1

@@ -1,5 +1,7 @@
 #lang sicp
 
+;; 实现 repeated
+
 (define (compose f g)
   (lambda (x) (f (g x))))
 

@@ -1,5 +1,6 @@
 #lang sicp
 
+;; 实现 double
 (define (double f)
   (lambda (x) (f (f x))))
 

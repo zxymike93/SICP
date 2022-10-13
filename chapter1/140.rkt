@@ -1,5 +1,7 @@
 #lang sicp
 
+;; 实现一个 cubic 函数，它逼近三次方程 x^3 + ax^2 + bx + c 的零点。
+
 (define (fixed-point f first-guess)
   
   (define (close-enough? a b)

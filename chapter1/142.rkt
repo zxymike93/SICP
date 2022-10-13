@@ -1,5 +1,6 @@
 #lang sicp
 
+;; 实现 compose
 (define (compose f g)
   (lambda (x) (f (g x))))
 

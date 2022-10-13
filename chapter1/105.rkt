@@ -3,11 +3,14 @@
 (define (p) (p))
 
 (define (test x y)
-  ((if (= x 0) 0
-       y)))
+  (if (= x 0)
+      0
+      y))
 
 (test 0 (p))
 
-;; 上述程序，假设无论用应用序还是正则序，if 都会先估值
-;; 不同估值顺序的估值过程见
-;; https://github.com/xinyuzheng7/SICP/blob/master/%E5%BA%94%E7%94%A8%E5%BA%8F%E5%92%8C%E6%AD%A3%E5%88%99%E5%BA%8F.rst#%E5%AF%B9%E6%AF%94
+;; 应用序因为总是要对参数求值，第二个参数 (p) 会被无限递归调用。
+;; (test 0 (p)) => (test 0 (p)) => (test 0 (p))
+
+;; 正则序直接将参数代入，由于 <if> 的缘故，<alternative> 部分不会被执行。
+;; (test 0 (p)) => (if (= 0 0) 0 (p)) => (if true 0 (p)) => 0

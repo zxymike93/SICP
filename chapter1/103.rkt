@@ -1,7 +1,6 @@
 #lang sicp
 
-;; Define a procedure that takes three numbers as arguments and
-;; returns the sum of the squares of the two larger numbers.
+;; 定义一个过程，它接收三个参数，并求其中最大两者只和。
 
 (define (sum a b) (+ a b))
 
